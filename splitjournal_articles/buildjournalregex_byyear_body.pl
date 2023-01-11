@@ -14,7 +14,7 @@ if ($ARGV[0]=~/^wos$/i) {
     $inputfile="$inputfilesbasepath"."$inputyear".".tsv";
 
     if (!$inputyear) {
-	die("Usage: buildjournalregex_byyear_body.pl [mag YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
+	die("Usage: buildjournalregex_byyear_body.pl [oa YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
     }
 }
 elsif ($ARGV[0]=~/^mag$/i) {
@@ -28,22 +28,37 @@ elsif ($ARGV[0]=~/^mag$/i) {
 	die("Usage: buildjournalregex_byyear_body.pl [mag YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
     }
 }
+elsif ($ARGV[0]=~/^oa$/i) {
+    $inputfilesbasepath="$INPUTDIR_OA" . "oa_";
+    $inputyear=$ARGV[1];
+    $sourcefilecode="oa";
+
+    $inputfile="$inputfilesbasepath"."$inputyear".".tsv";
+
+    if (!$inputyear) {
+        die("Usage: buildjournalregex_byyear_body.pl [oa YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
+    }
+}
+
 else {
     $inputfile=$ARGV[0];
     $sourcefilecode="file";
     $file=1;
     
     if (!(-e $inputfile)) {
-	die("Usage: buildjournalregex_byyear_body.pl [mag YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
+	die("Usage: buildjournalregex_byyear_body.pl [oa YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
     }
 }
+
+#print "$inputfile\n";
 
 print "Using source directory/file: $inputfile  Sourcecode: $sourcefilecode\n\n";
 
 open(INFILE,$inputfile)||die("Can't open input file $inputfile");
 
-$outputdir="$NPL_BASE" . "/nplmatch/splitjournal_articles/year_regex_scripts_body_" . "$sourcefilecode". "/";
+$outputdir="$NPL_BASE" . "/nplmatch/splitjournal_articles/year_regex_scripts_body_" . "$sourcefilecode" . "/";
 
+#print "$outputdir\n";
 $inputdir="$NPL_BASE" . "/nplmatch/splitjournal_patent/body/";
 
 $date=`date`;
@@ -259,7 +274,7 @@ if ($file==0) {
 	}
     }
     close(OUTFILE);
-    `chmod 775 $outputfile`;
+    `chmod 777 $outputfile`;
 }
 else {
     foreach $year (sort(keys %Output)) {
@@ -285,7 +300,7 @@ else {
 	    }
 	}
 	close(OUTFILE);
-	`chmod 775 $outputfile`;
+	`chmod 777 $outputfile`;
     }
 }
 

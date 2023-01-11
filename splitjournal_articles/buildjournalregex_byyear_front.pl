@@ -14,7 +14,7 @@ if ($ARGV[0]=~/^wos$/i) {
     $inputfile="$inputfilesbasepath"."$inputyear".".tsv";
 
     if (!$inputyear) {
-	die("Usage: buildjournalregex_byyear_front.pl [mag YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
+	die("Usage: buildjournalregex_byyear_front.pl [oa YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
     }
 }
 elsif ($ARGV[0]=~/^mag$/i) {
@@ -28,13 +28,24 @@ elsif ($ARGV[0]=~/^mag$/i) {
 	die("Usage: buildjournalregex_byyear_front.pl [mag YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
     }
 }
+elsif ($ARGV[0]=~/^oa$/i) {
+    $inputfilesbasepath="$INPUTDIR_OA" . "oa_";
+    $inputyear=$ARGV[1];
+    $sourcefilecode="oa";
+
+    $inputfile="$inputfilesbasepath"."$inputyear".".tsv";
+
+    if (!$inputyear) {
+       die("Usage: buildjournalregex_byyear_front.pl [oa YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
+    }
+}
 else {
     $inputfile=$ARGV[0];
     $sourcefilecode="file";
     $file=1;
     
     if (!(-e $inputfile)) {
-	die("Usage: buildjournalregex_byyear_front.pl [mag YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
+	die("Usage: buildjournalregex_byyear_front.pl [oa YEAR]|[wos YEAR]|[filename_or_fullpath_of_file]\n");
     }
 }
 
@@ -237,7 +248,7 @@ if ($file==0) {
 		$filenum=$filect+1000;
 		if ($filect!=0) { 
 		    close(OUTFILE); 
-		    `chmod 775 $outputfile`;
+		    `chmod 777 $outputfile`;
 		}
 		$filect++;
 		$outputfile="$outputdir"."year"."$inputyear"."-"."$filenum".".pl";
@@ -262,7 +273,7 @@ if ($file==0) {
 	}
     }
     close(OUTFILE);
-    `chmod 775 $outputfile`;
+    `chmod 777 $outputfile`;
 }
 else {
     foreach $year (sort(keys %Output)) {
@@ -288,7 +299,7 @@ else {
 	    }
 	}
 	close(OUTFILE);
-	`chmod 775 $outputfile`;
+	`chmod 777 $outputfile`;
     }
 }
 
