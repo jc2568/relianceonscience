@@ -1,30 +1,32 @@
-#!/bin/bash -l
+#!/bin/bash
 
-##$ -t 1800-2019
-#SBATCH --array=0-220
+### Author: Joshua Chu
+### Edited: January 9, 2023
 
-#SBATCH -p large
+### this script utilizes the splitjournal_front.pl perl script and separates
+### journal names by year
 
-##$ -j y
-#SBATCH -o splitjournal-%j.out
-
-##$ -N splitjournal_front
-#SBATCH -J splitjournal_front
-
-##$ -l h_rt=12:00:00
-#SBATCH -t 12:00:00
-
-##$ -P marxnsf1
-##$ -hold_jid terracefront,terracejournal
-#SBATCH --dependency=singleton --job-name=terracemag
-
-##$ -V
-
-#chmod 664 $SGE_STDOUT_PATH
-#chmod 664 $SGE_STDERR_PATH
+### Command structure: sh slurm_splitjournal_front.sh
 
 
-YEAR_ID=$(( ($SLURM_ARRAY_TASK_ID + 1800) ))
+### input year from config file
+year=$(perl $NPL_BASE/nplmatch/config.pl)
 
-#$NPL_BASE/nplmatch/splitjournal_patent/splitjournal_front.pl $SGE_TASK_ID
-perl $NPL_BASE/nplmatch/splitjournal_patent/splitjournal_front.pl $YEAR_ID
+### set the present working directory to variable
+directory=$(pwd)
+
+for ((i=1800; i<=$year; i++))
+do
+ TEMPFILE=./slurmfile.slurm
+ echo "doing $i"
+ echo "#!/bin/bash" > $TEMPFILE
+ echo "#SBATCH -p xlarge" >> $TEMPFILE ### only use xlarge partition for patent step
+ echo "#SBATCH -J sjf$i" >> $TEMPFILE
+ echo "#SBATCH -t 14-0" >> $TEMPFILE ### batch processing requires a larger time scale than just 96 hrs
+ echo "#SBATCH --wckey=marxnfs1" >> $TEMPFILE
+ echo "" >> $TEMPFILE
+ echo "module load perl5-libs" >>$TEMPFILE
+ echo "perl $directory/splitjournal_front.pl $i" >> $TEMPFILE
+ sbatch $TEMPFILE
+ sleep 0.1
+done
