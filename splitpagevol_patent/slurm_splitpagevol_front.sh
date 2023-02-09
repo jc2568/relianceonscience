@@ -1,30 +1,32 @@
-#!/bin/bash -l
+#!/bin/bash
 
-##$ -t 1799-2019
-##$ -t 1800-2019
-#SBATCH --array=0-221
-##SBATCH --array=0-2
+### Author: Joshua Chu
+### Edited: January 9, 2023
 
-##$ -j y
-#SBATCH -o splitpagevol-%j.out
+### this script utilizes the splitpagevol_front.pl perl script and separates
+### records according to the identified numbers in each line
 
-##$ -l h_rt=96:00:00
-#SBATCH -t 96:00:00
-
-##$ -N splitpagevol_front
-#SBATCH -J splitpagevol_front
-
-##$ -hold_jid terracefront,terracewos,terracemag,terracepubmed
-#SBATCH --dependency=singleton --job-name=terracemag --job-name=terracewos --job-name=terracepubmed
-
-##$ -V
-
-#chmod 664 $SGE_STDOUT_PATH
-#chmod 664 $SGE_STDERR_PATH
-
-YEAR_ID=$(( ($SLURM_ARRAY_TASK_ID + 1799) ))
-
-#$NPL_BASE/nplmatch/splitpagevol_patent/splitpagevol_front.pl $SGE_TASK_ID
-perl $NPL_BASE/nplmatch/splitpagevol_patent/splitpagevol_front.pl $YEAR_ID
+### Command structure: sh slurm_splitpagevol_front.sh
 
 
+### input year from config file
+year=$(perl $NPL_BASE/nplmatch/config.pl)
+
+### set the present working directory to variable
+directory=$(pwd)
+
+for ((i=1799; i<=$year; i++))
+do
+ TEMPFILE=./slurmfile.slurm
+ echo "doing $i"
+ echo "#!/bin/bash" > $TEMPFILE
+ echo "#SBATCH -p xlarge" >> $TEMPFILE ### only use xlarge partition for patent step
+ echo "#SBATCH -J spvf$i" >> $TEMPFILE
+ echo "#SBATCH -t 14-0" >> $TEMPFILE ### leave time set to 14 days
+ echo "#SBATCH --wckey=marxnfs1" >> $TEMPFILE
+ echo "" >> $TEMPFILE
+ echo "module load perl5-libs" >>$TEMPFILE
+ echo "perl $directory/splitpagevol_front.pl $i" >> $TEMPFILE
+ sbatch $TEMPFILE
+ sleep 0.1
+done
