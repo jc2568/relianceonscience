@@ -1,32 +1,32 @@
-#!/bin/bash 
-### #!/bin/bash -l
+#!/bin/bash
 
-#SBATCH -o splitjournal-%j.out
-### #$ -j y
+### Author: Joshua Chu
+### Edited: January 12, 2023
 
-#SBATCH -J splitjournalbody
-### #$ -N splitjournalbody
+### this script utilizes the splitjournal_body.pl perl script and separates
+### journal names by year
 
-#SBATCH -t 12:00:00
-### #$ -l h_rt=12:00:00
+### Command structure: sh slurm_splitjournal_body.sh
 
-#SBATCH --wckey=marxnfs1
-### #$ -P marxnsf1
 
-###SBATCH --depend=terracejournal
-### #$ -hold_jid terracejournal
+### input year from config file
+year=$(perl $NPL_BASE/nplmatch/config.pl)
 
-#SBATCH --export=ALL
-### #$ -V
+### set the present working directory to variable
+directory=$(pwd)
 
-### chmod 664 $SGE_STDOUT_PATH
-# standard out is current directory unless you change it 
-### chmod 664 $SGE_STDERR_PATH
-#  standard out is current directory unless you change it 
-
-#SBATCH --array=0-220
-YEAR_ID=$(( ($SLURM_ARRAY_TASK_ID + 1800) ))
-### #$ -t 1800-2019
-
-perl $NPL_BASE/nplmatch/splitjournal_patent/splitjournal_body.pl $YEAR_ID
-### $NPL_BASE/nplmatch/splitjournal_patent/splitjournal_body.pl $SGE_TASK_ID
+for ((i=1800; i<=$year; i++))
+do
+ TEMPFILE=./slurmfile.slurm
+ echo "doing $i"
+ echo "#!/bin/bash" > $TEMPFILE
+ echo "#SBATCH -p xlarge" >> $TEMPFILE ### only use xlarge partition for patent step
+ echo "#SBATCH -J sjb$i" >> $TEMPFILE
+ echo "#SBATCH -t 14-0" >> $TEMPFILE ### batch processing requires a larger time scale than just 96 hrs
+ echo "#SBATCH --wckey=marxnfs1" >> $TEMPFILE
+ echo "" >> $TEMPFILE
+ echo "module load perl5-libs" >>$TEMPFILE
+ echo "perl $directory/splitjournal_body.pl $i" >> $TEMPFILE
+ sbatch $TEMPFILE
+ sleep 0.1
+done
