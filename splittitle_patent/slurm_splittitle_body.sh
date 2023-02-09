@@ -1,32 +1,37 @@
-#!/bin/bash 
-### #!/bin/bash -l
+#!/bin/bash
 
-### #$ -j y
-#SBATCH -o splittitle-%j.out
+### Author: Joshua Chu
+### Edited: January 26, 2023
 
+### this script utilizes the splittitle_body.pl perl script and separates
+### title names by year
 
-### #$ -N splittitle_body
-#SBATCH -J splittitle_body
+### Author: Joshua Chu
+### Edited: January 27, 2023
 
-### #$ -l h_rt=48:00:00
-#SBATCH -t 48:00:00
+### modified the #SBATCH -t flag from 12 to 96 hrs
 
-### #$ -hold_jid terracebody,terracewos,terracemag,terracepubmed
-###SBATCH --depend=terracebody,terracewos,terracemag,terracepubmed
-
-### #$ -P marxnsf1
-#SBATCH --wckey=marxnfs1
+### Command structure: sh slurm_splittitle_body.sh
 
 
-### chmod 664 $SGE_STDOUT_PATH
-# standard out is current directory unless you change it 
-### chmod 664 $SGE_STDERR_PATH
-#  standard out is current directory unless you change it 
+### input year from config file
+year=$(perl $NPL_BASE/nplmatch/config.pl)
 
-### #$ -t 1800-2019
-#SBATCH --array=0-220
-YEAR_ID=$(( ($SLURM_ARRAY_TASK_ID + 1800) ))
+### set the present working directory to variable
+directory=$(pwd)
 
-### $NPL_BASE/nplmatch/splittitle_patent/splittitle_body.pl $SGE_TASK_ID
-perl $NPL_BASE/nplmatch/splittitle_patent/splittitle_body.pl $YEAR_ID
-
+for ((i=1800; i<=$year; i++))
+do
+ TEMPFILE=./slurmfile.slurm
+ echo "doing $i"
+ echo "#!/bin/bash" > $TEMPFILE
+ echo "#SBATCH -p xlarge" >> $TEMPFILE ### only use xlarge partition for patent step
+ echo "#SBATCH -J stb$i" >> $TEMPFILE
+ echo "#SBATCH -t 14-0" >> $TEMPFILE ### batch processing requires a larger time scale than just 96 hrs
+ echo "#SBATCH --wckey=marxnfs1" >> $TEMPFILE
+ echo "" >> $TEMPFILE
+ echo "module load perl5-libs" >>$TEMPFILE
+ echo "perl $directory/splittitle_body.pl $i" >> $TEMPFILE
+ sbatch $TEMPFILE
+ sleep 0.1
+done
