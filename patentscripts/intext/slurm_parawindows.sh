@@ -24,11 +24,11 @@ directory1=$(pwd)
 frontorintext=${directory1:54}
 
 ### determine how many sub-directories are present in the year directory
-numdir=$(find $directory/$frontorintext/2015 -mindepth 1 -maxdepth 1 -type d | wc -l)
+numdir=$(find $directory/$frontorintext/$year -mindepth 1 -maxdepth 1 -type d | wc -l)
 subdir=$(printf "%03d\n" $numdir)
 
 ### set the full paths to the paras- files for front and intext
-fullpath="$directory/$frontorintext/2015/$subdir/processed"
+fullpath="$directory/$frontorintext/$year/$subdir/processed"
 
 TEMPFILE=./slurmfile.slurm
 NCLNPARAS=$(ls $fullpath/cleanparas-* | wc -l)
