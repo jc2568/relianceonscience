@@ -2,7 +2,7 @@
 
 ### import the year from the config.pl file and set variable to point to the googlebatchdownload directory
 year=$(perl /home/fs01/nplmatchroot/nplmatch/config.pl)
-yeardir=$(eval echo $NPL_BASE/nplmatch/inputs/front/2015)
+yeardir=$(eval echo $NPL_BASE/nplmatch/inputs/front/$year)
 
 ### determine how many sub-directories are present in the year directory
 numdir=$(find $yeardir/ -mindepth 1 -maxdepth 1 -type d | wc -l)
