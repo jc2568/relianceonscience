@@ -39,7 +39,7 @@ while(<>) {
     $line=~s/Ć/C/g;
     $line=~s/Â/A/g;
     $line=~s/Ą/A/g;
-    $line=~s/ś/$line=~s/;
+    $line=~s/ś/s/;
     $line=~s/Ì/I/g;
     $line=~s/Â/A/g;
     $line=~s/Ů/U/g;
@@ -54,11 +54,11 @@ while(<>) {
     $line=~s/Ę/E/g;
     $line=~s/Ř/R/g;
     $line=~s/C/C/g;
-    $line=~s/š/$line=~s/;
+    $line=~s/š/s/;
     $line=~s/È/E/g;
     $line=~s/ú/u/g;
-    $line=~s/Ś/$LINE=~S/g;
-    $line=~s/ś/$line=~s/;
+    $line=~s/Ś/S/g;
+    $line=~s/ś/s/;
     $line=~s/Ķ/K/g;
     $line=~s/ª/a/g;
     $line=~s/Ë/E/g;
@@ -76,13 +76,13 @@ while(<>) {
     $line=~s/Ú/U/g;
     $line=~s/Č/E/g;
     $line=~s/ź/z/g;
-    $line=~s/Š/$LINE=~S/g;
+    $line=~s/Š/S/g;
     $line=~s/İ/I/g;
     $line=~s/Í/I/g;
     $line=~s/Î/I/g;
     $line=~s/Ě/E/g;
-    $line=~s/Š/$LINE=~S/g;
-    $line=~s/Ş/$LINE=~S/g;
+    $line=~s/Š/S/g;
+    $line=~s/Ş/S/g;
     $line=~s/á/a/g;
     $line=~s/ó/o/g;
     $line=~s/“/"/g;
@@ -412,6 +412,8 @@ while(<>) {
      $line=~s/Ж/zh/g;
      $line=~s/ж/zh/g;
      $line=~s/\^@//g;
+     #$line=~s/\$//g;
+   #$line=~s/\"//g;
     $line=~s/[^[:ascii:]]//g; # Remove any remaining non-ASCII characters
 #    $line=~s/tr/\0-\177//cd; # Different way of removing non-ASCII characters
 
