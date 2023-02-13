@@ -31,7 +31,8 @@ while (<>) {
 
     next if (/official citations:/) | (/npl citations:/);
     # New Patent ID found
-    if (/^__((US|EP)\-?[A-Z]{0,4}\d{1,10}-?[A-z][0-9])/) {
+#    if (/^__((US|EP)\-?[A-Z]{0,4}\d{1,10}-?[A-z]?([0-9]|__|.))/) { ### keep this one because it correctly extracts US and EPO patents
+    if (/^__((US|EP)\-?[A-Z]{0,4}\d{1,10}\-[A-Z]?([0-9]__|[0-9]|__|))/) {
 #    if (/^__((US|EP)\-?[A-Z]{0,4}\d{1,10})/) { ### this truncates the 2nd -## from US and EPO patents
 #    if (/^__((US|EP)\-.*)/) { ### this was too generic and caused errors downstream
 #    if (/^__((US|EP)\-?[A-Z]{0,4}\d{1,10})/) { ### this line can replicate last years results but the -A2__ was removed

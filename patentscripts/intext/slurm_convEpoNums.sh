@@ -39,25 +39,22 @@ fullintexteporaw="$directory/$frontorintext/$year/$subdir/epo_data/raw"
 
 TEMPFILE=./slurmfile.slurm
 NEPO=$(ls $fullintexteporaw/EP* | wc -l)
-EP_ID=$(seq -f "%02g" 0 $((NEPO-1)))
-array=($EP_ID)
-a=0
 
 echo "The number of EPO files to process is $NEPO"
 
  for i in $fullintexteporaw/EP*
  do
   echo "doing ${i:69:13}"
+  num=${i:71:2}
   echo "#!/bin/bash" > $TEMPFILE
-  echo "#SBATCH -p small,large" >> $TEMPFILE
-  echo "#SBATCH -J EPO-${array[${a}]}" >> $TEMPFILE
+  echo "#SBATCH -p xlarge" >> $TEMPFILE
+  echo "#SBATCH -J EPO-${num}" >> $TEMPFILE
   echo "#SBATCH -t 12:00:00" >> $TEMPFILE
   echo "#SBATCH --wckey=marxnfs1" >> $TEMPFILE
   echo "" >> $TEMPFILE
   echo "module load perl5-libs" >>$TEMPFILE
-  echo "perl $directory/patentscripts/intext/convEpoNums.pl < $i > $fullintexteporaw/EP${array[${a}]}00000mod.txt" >> $TEMPFILE
-  echo "chmod 777 $fullintexteporaw/EP${array[${a}]}00000mod.txt" >> $TEMPFILE
-  ((a++))
+  echo "perl $directory/patentscripts/intext/convEpoNums.pl < $i > $fullintexteporaw/EP${num}00000mod.txt" >> $TEMPFILE
+  echo "chmod 777 $fullintexteporaw/EP${num}00000mod.txt" >> $TEMPFILE
   sbatch $TEMPFILE
   sleep 0.1
  done
