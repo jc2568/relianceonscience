@@ -18,7 +18,8 @@ while(<SKIPFILE>) {
 close(SKIPFILE);
 
 $year=$ARGV[0];
-$infile="$INPUTDIR_PATENTS_BODY" . "body_$year" . ".tsv";
+#$infile="$INPUTDIR_PATENTS_BODY" . "body_$year" . ".tsv";
+$infile="$INPUTDIR_PATENTS_BODYBATCH" . "body_$year" . ".tsv";
 if (!$year) { die "Usage: splittitle_body.pl YEAR\n"; }
 
 open(INFILE,"$infile")||die("Can't open infile $infile.\n");
@@ -26,6 +27,7 @@ open(INFILE,"$infile")||die("Can't open infile $infile.\n");
 $outdir="$NPL_BASE" . "/nplmatch/splittitle_patent/body/$year/";
 if (!(-e $outdir)) {
     mkdir($outdir);
+    `chmod 777 $outdir`;
 }
 
 # Create letter directories of the form 1976/a/b/ for a word like 'abridged' in order to
@@ -34,13 +36,13 @@ for($i=0;$i<26;$i++) {
     $outdir_letter="$outdir" . "$Alphabet[$i]";
     if (!(-e $outdir_letter)) {
 	mkdir($outdir_letter);
-        `chmod 775 $outdir_letter`;
+        `chmod 777 $outdir_letter`;
     }
     for($j=0;$j<26;$j++) {
 	$outdir_letter="$outdir" . "$Alphabet[$i]" . "/" . "$Alphabet[$j]";
 	if (!(-e $outdir_letter)) {
 	    mkdir($outdir_letter);
-	    `chmod 775 $outdir_letter`;
+	    `chmod 777 $outdir_letter`;
 	}
     }
 }
@@ -100,7 +102,7 @@ foreach $key (sort(keys %Output)) {
     open(OUTFILE,">$outdir/$firstletter/$secondletter/$key");
     print OUTFILE "$Output{$key}";
     close(OUTFILE);
-    `chmod 664 $outdir/$firstletter/$secondletter/$key`;
+    `chmod 777 $outdir/$firstletter/$secondletter/$key`;
 }
 
 $date=`date`;

@@ -20,7 +20,7 @@ year=$(perl $NPL_BASE/nplmatch/config.pl)
 ### set the present working directory to variable
 directory=$(pwd)
 
-for ((i=1800; i<=$year; i++))
+for ((i=1993; i<=1993; i++))
 do
  TEMPFILE=./slurmfile.slurm
  echo "doing $i"
@@ -29,6 +29,7 @@ do
  echo "#SBATCH -J stb$i" >> $TEMPFILE
  echo "#SBATCH -t 14-0" >> $TEMPFILE ### batch processing requires a larger time scale than just 96 hrs
  echo "#SBATCH --wckey=marxnfs1" >> $TEMPFILE
+ echo "#SBATCH -n 100" >> $TEMPFILE
  echo "" >> $TEMPFILE
  echo "module load perl5-libs" >>$TEMPFILE
  echo "perl $directory/splittitle_body.pl $i" >> $TEMPFILE
