@@ -5,23 +5,23 @@
 ### this script that used mag files can be found in the doNotDelete directory
 
 ### Script usage: sh slurm_buildjournalregex_byyear_body.sh. In order to use different
-### databases, make sure to change the dBase variable below. The $CURRENTYR variable is obtained
+### databases, make sure to change the dBase variable below. The $year variable is obtained
 ### from the config.pl script that you should have already modified to the current year.
 ### If you have not done this already, please navigate to $NPL_BASE/nplmatch/config.pl
-### and change the CURRENTYR variable to the current year. Not performing this step will
+### and change the year variable to the current year. Not performing this step will
 ### result in no matches for the current year.
 
 dBase=oa # mag or wos or oa
 
-CURRENTYR=$(perl /home/fs01/nplmatchroot/nplmatch/config.pl)
+year=$(perl /home/fs01/nplmatchroot/nplmatch/config.pl)
 
-for ((i=1800; i<=$CURRENTYR; i++))
+for ((i=1800; i<=$year; i++))
 do
  TEMPFILE=./slurmfile.slurm
  echo "buildtitleregex_byyear_body $i"
  echo "#!/bin/bash" > $TEMPFILE
- echo "#SBATCH -p small,large,xlarge" >> $TEMPFILE
- echo "#SBATCH -J bjryb" >> $TEMPFILE
+ echo "#SBATCH -p small,large" >> $TEMPFILE
+ echo "#SBATCH -J bjyb${i}" >> $TEMPFILE
  echo "#SBATCH -t 14-00:00" >> $TEMPFILE
  echo "#SBATCH --wckey=marxnfs1" >> $TEMPFILE
  echo "" >> $TEMPFILE

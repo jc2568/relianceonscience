@@ -5,23 +5,21 @@
 ### saved in year_regex_output_front_ARTICLEDB directory
 
 ### Script usage: sh slurm_running_front.sh. In order to use different databases, make sure
-### to change the ARTICLEDB variable below. The $CURRENTYR variable is obtained from the config.pl
+### to change the ARTICLEDB variable below. The $year variable is obtained from the config.pl
 ### script that you should have already modified to the current year. If you have not done
-### this already, please navigate to $NPL_BASE/nplmatch/config.pl and change the CURRENTYR variable
+### this already, please navigate to $NPL_BASE/nplmatch/config.pl and change the year variable
 ### to the current year. Not performing this step will result in no matches for the current year.
 
-
-############ if something does not work, check that the $i variable is correctly set in the code below
-
+### command structure: sh slurm_running_front.sh
 
 SPLITTYPE=journal
-JOBTYPE=xjfa # xjbm or xjba
+JOBTYPE=rjfo # rjfm or rjfo
 FRONTORBODY=front
 ARTICLEDB=oa
 
-CURRENTYR=$(perl /home/fs01/nplmatchroot/nplmatch/config.pl)
+year=$(perl /home/fs01/nplmatchroot/nplmatch/config.pl)
 
-for ((i=1800; i<=$CURRENTYR; i++))
+for ((i=1800; i<=$year; i++))
 do
  TEMPSLURMFILE=./tempslurm/${JOBTYPE}${i}.slurm
  rm -f $TEMPSLURMFILE
@@ -32,7 +30,7 @@ do
  echo "writing $TEMPSLURMFILE"
  echo "#!/bin/bash -l" > $TEMPSLURMFILE
  echo "" >>$TEMPSLURMFILE
- echo "#SBATCH -p xlarge,large,small" >> $TEMPSLURMFILE
+ echo "#SBATCH -p small,large,xlarge" >> $TEMPSLURMFILE
  echo "#SBATCH -t 96:00:00" >> $TEMPSLURMFILE
  echo "#SBATCH -J ${JOBTYPE}${i}" >> $TEMPSLURMFILE
  echo "#SBATCH --array=1-${FILESFORYEAR}" >>$TEMPSLURMFILE

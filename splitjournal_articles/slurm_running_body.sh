@@ -5,23 +5,20 @@
 ### saved in year_regex_output_body_ARTICLEDB directory
 
 ### Script usage: sh slurm_running_body.sh. In order to use different databases, make sure
-### to change the ARTICLEDB variable below. The $CURRENTYR variable is obtained from the config.pl
+### to change the ARTICLEDB variable below. The $year variable is obtained from the config.pl
 ### script that you should have already modified to the current year. If you have not done
-### this already, please navigate to $NPL_BASE/nplmatch/config.pl and change the CURRENTYR variable
+### this already, please navigate to $NPL_BASE/nplmatch/config.pl and change the year variable
 ### to the current year. Not performing this step will result in no matches for the current year.
 
 
-############ if something does not work, check that the $i variable is correctly set in the code below
-
-
 SPLITTYPE=journal
-JOBTYPE=xjba # xjbm or xjba
+JOBTYPE=rjbo # rjbm or rjbo
 FRONTORBODY=body
 ARTICLEDB=oa # mag or oa or wos
 
-CURRENTYR=$(perl /home/fs01/nplmatchroot/nplmatch/config.pl)
+year=$(perl /home/fs01/nplmatchroot/nplmatch/config.pl)
 
-for ((i=1800; i<=$CURRENTYR; i++))
+for ((i=1800; i<=$year; i++))
 do
  TEMPSLURMFILE=./tempslurm/${JOBTYPE}${i}.slurm
  rm -f $TEMPSLURMFILE
@@ -32,7 +29,7 @@ do
  echo "writing $TEMPSLURMFILE"
  echo "#!/bin/bash -l" > $TEMPSLURMFILE
  echo "" >>$TEMPSLURMFILE
- echo "#SBATCH -p xlarge,large,small" >> $TEMPSLURMFILE
+ echo "#SBATCH -p small,large,xlarge" >> $TEMPSLURMFILE
  echo "#SBATCH -t 96:00:00" >> $TEMPSLURMFILE
  echo "#SBATCH -J ${JOBTYPE}${i}" >> $TEMPSLURMFILE
  echo "#SBATCH --array=1-${FILESFORYEAR}" >>$TEMPSLURMFILE
@@ -41,8 +38,8 @@ do
  echo "" >> $TEMPSLURMFILE
  echo "module load perl5-libs" >> $TEMPSLURMFILE
  echo "perl $NPL_BASE/nplmatch/split${SPLITTYPE}_articles/year_regex_scripts_${FRONTORBODY}_${ARTICLEDB}/year${i}-\$FILE_ID.pl > $NPL_BASE/nplmatch/split${SPLITTYPE}_articles/year_regex_output_${FRONTORBODY}_${ARTICLEDB}/year${i}-\$FILE_ID.txt" >>$TEMPSLURMFILE
+ echo "chmod 777 $NPL_BASE/nplmatch/split${SPLITTYPE}_articles/year_regex_output_${FRONTORBODY}_${ARTICLEDB}/year${i}-\$FILE_ID.txt" >> $TEMPSLURMFILE
  echo "sbatching $TEMPSLURMFILE"
- chmod 777 $TEMPSLURMFILE
  sbatch $TEMPSLURMFILE
 done
 
