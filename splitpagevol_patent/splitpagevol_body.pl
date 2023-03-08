@@ -5,7 +5,8 @@ require "$ENV{'NPL_BASE'}/nplmatch/config.pl";
 $maxnumber="100000";
 
 $year=$ARGV[0];
-$infile="$INPUTDIR_PATENTS_BODY" . "body_$year" . ".tsv";
+#$infile="$INPUTDIR_PATENTS_BODY" . "body_$year" . ".tsv";
+$infile="$INPUTDIR_PATENTS_BODYBATCH" . "body_$year" . ".tsv";
 if (!$year) { die "Usage: splitpagevol_body.pl YEAR\n"; }
 
 open(INFILE,"$infile")||die("Can't open infile $infile.\n");
@@ -14,13 +15,13 @@ $outdir="$NPL_BASE" . "/nplmatch/splitpagevol_patent/body/$year";
 
 if (!(-e $outdir)) {
     mkdir($outdir);
-    `chmod 775 $outdir`;
+    `chmod 777 $outdir`;
 
     for($i=0;$i<10;$i++) {
 	$dirname="$outdir" . "/" . "$i";
 	if (!(-e $dirname)) {
 	    mkdir($dirname);
-	    `chmod 775 $dirname`;
+	    `chmod 777 $dirname`;
 	}
     }
 }
@@ -62,7 +63,7 @@ foreach $key (keys %Output) {
     open(OUTFILE,">$outdir/$firstchar/$key")||die("can't open file >$year/$firstchar/$key<\n");
     print OUTFILE "$Output{$key}";
     close(OUTFILE);
-    `chmod 664 $outdir/$firstchar/$key`;
+    `chmod 777 $outdir/$firstchar/$key`;
 }
 
 $date=`date`;
