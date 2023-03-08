@@ -13,13 +13,14 @@ if (!(-e $basedir)) {
 $year=$ARGV[0];
 if (!$year) { die "Usage: splitjournal_body.pl YEAR\n"; }
 
-$infile="$INPUTDIR_JOURNAL_BODY" . "journalbody_$year" . ".tsv";
+#$infile="$INPUTDIR_JOURNAL_BODY" . "journalbody_$year" . ".tsv";
+$infile="$INPUTDIR_JOURNAL_BODYBATCH" . "journalbody_$year" . ".tsv";
 open(INFILE,"$infile")||die("Can't open infile $infile.\n");
 
 $outdir="$basedir"."$year";
 if (!(-e $outdir)) {
-    #print("making $year directory: $outdir\n");
     mkdir($outdir);
+    `chmod 777 $outdir`;
 }
 
 # Create letter directories of the form 1976/p/r/ for a journal like 'proceedings of the nas' in order to
@@ -28,13 +29,13 @@ for($i=0;$i<27;$i++) {
     $outdir_letter="$outdir"."/"."$Alphabet[$i]";
     if (!(-e $outdir_letter)) {
 	mkdir($outdir_letter);
-        `chmod 775 $outdir_letter`;
+        `chmod 777 $outdir_letter`;
     }
     for($j=0;$j<27;$j++) {
 	$outdir_letter="$outdir"."/"."$Alphabet[$i]"."/"."$Alphabet[$j]";
 	if (!(-e $outdir_letter)) {
 	    mkdir($outdir_letter);
-	    `chmod 775 $outdir_letter`;
+	    `chmod 777 $outdir_letter`;
 	}
     }
 }
@@ -75,7 +76,7 @@ foreach $key (sort(keys %Output)) {
     open(OUTFILE,">$outdir/$firstletter/$secondletter/$key");
     print OUTFILE "$Output{$key}";
     close(OUTFILE);
-    `chmod 664 $outdir/$firstletter/$secondletter/$key`;
+    `chmod 777 $outdir/$firstletter/$secondletter/$key`;
 }
 
 $date=`date`;
